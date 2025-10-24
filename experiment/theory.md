@@ -1,63 +1,85 @@
 ## Theory
 **Introduction:**  
-The boundary between accumulation and depletion is the flat-band voltage and the boundary between depletion and inversion is the threshold voltage.
+MOSFET C-V Parameter Extraction (Cg vs. Vg)
 <div align="center">
-    <img src="images/tvic.jpg" alt="Threshold Voltage and Inversion charge">  
-      <p><strong>Fig. 1. Threshold Voltage and Inversion charge</strong></p>
+    <img src="images/th10.png" alt="MOSFET Cg vs Vg Capacitance-Voltage Characteristics & SPICE Parameter Extraction">  
+      <p><strong>Fig. 1. MOSFET Cg vs Vg Capacitance-Voltage Characteristics & SPICE Parameter Extraction</strong></p>
 </div>
 
+## Introduction
 
+The Gate Capacitance versus Gate Voltage (Cg vs. Vg) measurement is one of the most powerful methods for extracting a MOSFET's physical parameters. It involves measuring the capacitance of the MOS "stack" (Gate-Oxide-Substrate) as the gate voltage ($V_g$) is swept, while the source, drain, and bulk are typically grounded.
 
-  
-
-### MOS Capacitor's three regimes-Accumulation, Depletion, Inversion
-
-A MOS Capacitor can be in three regimes: accumulation, depletion, and inversion. The boundary between accumulation and depletion is the flat-band voltage, and the boundary between depletion and inversion is the threshold voltage. The flat-band voltage, denoted as V<sub>fb</sub> or V<sub>bi</sub>, is defined as φ<sub>m</sub> - φ<sub>s</sub>, where φ<sub>m</sub> is the work function of the metal and φ<sub>s</sub> is the work function of the semiconductor substrate.
-
-At the flat-band voltage, the bands are flat, resulting in an electric field of zero throughout the semiconductor. The hole concentration p equals the acceptor concentration, and the charge density ρ is zero.
-
-Accumulation occurs when the gate voltage V is negative, attracting holes to the oxide interface. This causes the valence band to bend up towards the Fermi energy, increasing the hole concentration p near the oxide interface. The Fermi energy in the metal (represented by the black line on the left in the band diagram) moves up for negative voltages, indicating an increase in electron energy.
-
-In the depletion regime, a positive gate voltage pushes mobile holes away from the oxide, leaving negatively charged acceptors behind. The valence band bends away from the Fermi energy at the oxide, resulting in a lower hole concentration near the oxide. The negative charge in the semiconductor is balanced by a positive charge on the metal surface, as indicated by the charge plot arrow. As the gate voltage increases positively, the depletion width grows, and the bands bend further down. Eventually, the conduction band gets closer to the Fermi energy than the valence band, leading to weak inversion where n > p near the oxide. Strong inversion occurs when n = N<sub>A</sub> (acceptor concentration) at the oxide interface, at the threshold voltage V<sub>T</sub>.
-
-At V > V<sub>T</sub>, an inversion channel forms at the semiconductor/oxide interface, characterized by a layer of mobile electrons. In the inversion state, the electric field in the semiconductor remains constant, while it increases within the oxide layer.
-
-### Determining the band bending
-
-To calculate the band bending, we start with Gauss's law,
-
-$$\\begin{equation} \\nabla \\cdot \\vec{E} = \\frac{\\rho}{\\epsilon\_s\\epsilon\_0}. \\end{equation}$$
-
-$$Combining \ this \ with \ \\vec{E}=-\\nabla V \ yields \ the \ Poisson \ equation,$$
-
-$$\\begin{equation} \\nabla^2V = -\\frac{\\rho}{\\epsilon\_s\\epsilon\_0}, \\end{equation}$$
-
-where, for a MOS capacitor with a p-type substrate, the charge density is 
-$$\\rho = e\\left(-N\_A-n+p\\right)$$ and the charge carrier concentrations are,
-
-
-$$\\begin{equation} n=N\_c(300)\\left(\\frac{T}{300}\\right)^{3/2}\\exp\\left(\\frac{E\_F-E\_c}{k\_BT}\\right)\\qquad \\text{and}\\qquad p=N\_v(300)\\left(\\frac{T}{300}\\right)^{3/2}\\exp\\left(\\frac{E\_v-E\_F}{k\_BT}\\right). \\end{equation}$$
-
-Using the relation $$e\\frac{dV}{dx} = -\\frac{E\_v}{dx}$$ the Poisson equation can be written as a second order differential equation for E<sub>v(x)</sub>,
-
-$$ \\begin{equation} \\frac{d^2E\_v}{dx^2} = \\frac{e^2}{\\epsilon\_s\\epsilon\_0}\\left(-N\_A-N\_c\\exp\\left(\\frac{-E\_g-E\_v}{k\_BT}\\right)+N\_v\\exp\\left(\\frac{E\_v}{k\_BT}\\right)\\right). \\end{equation}$$
-
-### Numerical
-
-This differential equation was solved numerically using the shooting method. First the maximum depletion width max(x<sub>p</sub>) and the threshold voltage V<sub>T</sub> are estimated using the analytic formulas from the depletion approximation.
+The C-V curve has three distinct regions, which are fundamental to understanding the device and its parameters:
 
 
 
-$$\\begin{equation} x\_p = 2\\sqrt{\\frac{\\epsilon\_{\\text{semi}}\\epsilon\_0 k\_BT}{e^2N\_A}\\ln\\left(\\frac{N\_A}{n\_i}\\right)}. \\end{equation}$$ 
+1.  **Accumulation (Negative $V_g$ for NMOS):** The gate voltage attracts majority carriers (holes) to the silicon-oxide interface. The device acts like a simple parallel-plate capacitor, and the measured capacitance is at its maximum, $C_{max}$.
+2.  **Depletion (Small Positive $V_g$ for NMOS):** The gate voltage pushes majority carriers away, leaving a "depletion region" of fixed ions. This depletion region has its own capacitance ($C_{dep}$) which acts *in series* with the oxide capacitance ($C_{ox}$). This causes the total capacitance to drop.
+3.  **Inversion (High Positive $V_g$ for NMOS, $V_g > V_t$):** The gate voltage is strong enough to attract minority carriers (electrons), forming the inversion layer, or "channel."
 
-$$\\begin{equation} V\_T = \\frac{2t\_{ox}}{\\epsilon\_{ox}}\\sqrt{\\epsilon\_{\\text{semi}}N\_Ak\_BT \\ln \\left (\\frac{N\_A}{n\_i} \\right )} +\\frac{2k\_BT}{e} \\ln \\left (\\frac{N\_A}{n\_i} \\right ) +V\_{fb} \\end{equation}$$
+### High-Frequency vs. Low-Frequency C-V
 
-Far from the oxide, the valence band satisfies the conditions $$E_v=k_BTln(N_AN_v)=E_{v0}E_v=k_BTln⁡(\frac{N_A}{N_v})=E_{v0}$$ and $$dE_vdx=0\frac{dE_v}{dx}=0$$. To determine the band bending, we start a distance of 1.8x<sub>p</sub> from the oxide with $$E\_{v} = k\_BT\\ln\\left(\\frac{N\_A}{N\_v}\\right)=E\_{v0}$$ and a small value of $$dE_vdx=0\frac{dE_v}{dx}=0$$. The Poisson equation is integrated numerically using the midpoint method until the semiconductor oxide interface. This gives us the voltage V<sub>s</sub> at the semiconductor/oxide interface and the electric field E<sub>s</sub> at that point. The voltage on the gate is,
+* **Low-Frequency (LF):** The AC signal is slow enough that the minority carriers in the channel *can respond*. The channel effectively acts as the bottom "plate" of the capacitor, and the capacitance returns to its maximum value, $C_{ox}$.
+* **High-Frequency (HF):** (e.g., 1 MHz). The AC signal is *too fast* for the minority carriers to be generated and respond. The AC signal only "sees" the underlying depletion region, which is at its maximum width. Therefore, the capacitance *stays at its minimum value* ($C_{min}$).
 
+**SPICE parameter extraction is almost always performed using the High-Frequency (HF) C-V curve.**
 
-$$\\begin{equation} V = \\frac{\\epsilon\_{\\text{semi}}E\_s}{\\epsilon\_{\\text{ox}}}t\_{\\text{ox}}+V\_s. \\end{equation}$$
+---
 
-This is the correct gate voltage for the boundary conditions we chose on the right, but generally, it may not be the desired gate voltage. The starting position of integration is then adjusted either to the right or left, and the integration process is repeated until the calculated voltage, obtained through numerical integration, matches V<sub>shoot</sub>. The simulation produces incorrect results if the valence band or conduction band approach within approximately 3k<sub>BT</sub> from the Fermi energy. This limitation arises because the formulas for nnn and ppp are valid only when the valence and conduction bands are sufficiently far from the Fermi energy.
+## 1. Oxide and Substrate Parameters (LEVEL 1, 2, 3)
+
+### `TOX` (Oxide Thickness)
+
+* **Theory:** The maximum capacitance ($C_{max}$) measured in the strong accumulation region is equal to the oxide capacitance ($C_{ox}$).
+    $$C_{max} = C_{ox} = \frac{\epsilon_{ox} \cdot A}{TOX}$$
+* **Extraction:**
+    1.  Measure $C_{max}$ from the "high" plateau of the C-V curve.
+    2.  Knowing the device area ($A$) and the permittivity of silicon dioxide ($\epsilon_{ox}$), **`TOX`** can be directly calculated.
+    3.  This is the most important parameter, as `TOX` (or $C_{ox}$) is used in the equations for almost all other parameters (like `KP`, `GAMMA`, etc.).
+
+### `NSUB` (Substrate Doping)
+
+* **Theory:** The *minimum* capacitance ($C_{min}$) on the HF C-V plot occurs when the depletion region is at its maximum width ($W_{d,max}$). This minimum capacitance is $C_{ox}$ in series with the maximum depletion capacitance ($C_{dep,max}$).
+    $$C_{min} = \frac{C_{ox} \cdot C_{dep,max}}{C_{ox} + C_{dep,max}}$$
+    The maximum depletion width ($W_{d,max}$) is physically determined by the substrate doping concentration, **`NSUB`**.
+* **Extraction:**
+    1.  Measure $C_{min}$ from the "low" plateau of the C-V curve.
+    2.  Using the $C_{ox}$ value found from $C_{max}$, solve the series-capacitor equation to find $C_{dep,max}$.
+    3.  From $C_{dep,max}$, the underlying physical parameter **`NSUB`** can be calculated.
+
+### `VFB` (Flat-Band Voltage)
+
+* **Theory:** This is the gate voltage required to counteract the work-function differences and fixed oxide charges (`Qf`), resulting in "flat" energy bands in the silicon. It is the theoretical transition point between accumulation and depletion.
+* **Extraction:** `VFB` is not a simple intercept. It is extracted by analyzing the "shoulder" of the C-V curve as it transitions from $C_{max}$ into depletion. Advanced calculation methods (like finding the inflection point or using a "flat-band capacitance" value) are used to pinpoint `VFB`.
+
+---
+
+## 2. Interface Effects (LEVEL 3)
+
+### `NFS` (Fast Surface States / Interface Traps)
+
+* **Theory:** Real Si/SiO2 interfaces have "traps" (defects) that can capture or release charge. As the gate voltage sweeps through depletion, these traps must be charged/discharged, which also consumes part of the AC signal.
+* **Effect on Plot:** This "wastes" charge and makes the C-V curve "stretch out," meaning the slope in the depletion region becomes less steep than the ideal curve.
+* **Extraction:** `NFS` is a fitting parameter. The *slope* of the measured C-V curve in the depletion region is compared to the *ideal* slope (calculated from `TOX` and `NSUB`). The amount of "stretch-out" is used to quantify and extract **`NFS`**.
+
+---
+
+## 3. Advanced Physical Effects (LEVEL 6 - BSIM)
+
+For modern devices, two advanced effects (which are *not* modeled in LEVEL 1-3) must be accounted for.
+
+### Polysilicon Gate Depletion
+
+* **Theory:** The polysilicon gate is *not* a perfect metal. At high positive or negative gate voltages, a *depletion region forms in the polysilicon gate itself*. This poly-depletion layer has its own capacitance ($C_{poly}$) that is in series with $C_{ox}$.
+* **Effect on Plot:** This causes a *roll-off* or *decrease* in the measured capacitance *in the strong accumulation and inversion (LF) regions*. The measured "maximum" capacitance is slightly lower than the true $C_{ox}$.
+* **Extraction:** This is a *fitting parameter* in advanced models. The model is adjusted until it correctly fits this roll-off at high gate voltages.
+
+### Quantum Mechanical (QM) Effects
+
+* **Theory:** In strong inversion, the channel (inversion layer) is not a 2D sheet sitting perfectly at the Si/SiO2 interface. Quantum mechanics confines the electrons to a region *slightly away* from the interface.
+* **Effect on Plot:** This physical separation acts like a small, extra capacitor ($C_{qm}$) in series with $C_{ox}$. This *lowers* the total measured capacitance in the inversion region, even on an LF plot.
+* **Extraction:** This is another advanced *fitting parameter*. The model equations are adjusted until they match the measured capacitance reduction in the strong inversion region.
 
  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>    
  
