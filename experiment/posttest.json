@@ -3,114 +3,115 @@
 	  "version": 2.0,
   "questions": [
     {
-      "question": "1. What does the Gummel plot method characterize in a BJT?",
-      "answers": {
-        "a": "Voltage gain",
-        "b": "Current gain",
-        "c": "Power gain",
-        "d": "Frequency gain"
-      },
-      "correctAnswer": "b",
-      "difficulty": "beginner"
+    "question": "1. What operating region of the MOSFET corresponds to the *maximum* measured capacitance on the Cg vs. Vg plot?",
+    "answers": {
+      "a": "Depletion",
+      "b": "Accumulation",
+      "c": "Saturation",
+      "d": "Subthreshold"
     },
-    {
-      "question": "2. The Gummel plot is used to analyze the relationship between which of the following parameters?",
-      "answers": {
-        "a": "Base-emitter voltage (V_BE) and collector current (I_C)",
-        "b": "Base current (I_B) and collector current (I_C)",
-        "c": "Emitter current (I_E) and base current (I_B)",
-        "d": "Base-emitter voltage (V_BE) and base current (I_B)"
-      },
-      "correctAnswer": "b",
-      "difficulty": "beginner"
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "2. In a *high-frequency* C-V plot, the capacitance value is at its minimum during which region(s)?",
+    "answers": {
+      "a": "Only in the Depletion region",
+      "b": "Depletion and Strong Inversion regions",
+      "c": "Accumulation and Flat-band regions",
+      "d": "Only in the Accumulation region"
     },
-    {
-      "question": "3. What is typically plotted on the y-axis in a Gummel plot?",
-      "answers": {
-        "a": "Base current (I_B)",
-        "b": "Collector current (I_C)",
-        "c": "Base-emitter voltage (V_BE)",
-        "d": "Saturation current (I_S)"
-      },
-      "correctAnswer": "b",
-      "difficulty": "beginner"
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "3. The SPICE parameter `TOX` (Oxide Thickness) is primarily extracted from which value on the C-V plot?",
+    "answers": {
+      "a": "The voltage at the minimum capacitance",
+      "b": "The maximum capacitance value (in accumulation)",
+      "c": "The slope of the curve in depletion",
+      "d": "The flat-band voltage"
     },
-    {
-      "question": "4. In the Gummel plot, the relationship between collector current (I_C) and base-emitter voltage (V_BE) shows what type of relationship?",
-      "answers": {
-        "a": "Exponential",
-        "b": "Linear",
-        "c": "Quadratic",
-        "d": "Logarithmic"
-      },
-      "correctAnswer": "a",
-      "difficulty": "intermediate"
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "4. How would a *thinner* gate oxide (a smaller `TOX` value) visually affect the Cg vs. Vg plot?",
+    "answers": {
+      "a": "It would *decrease* the maximum capacitance.",
+      "b": "It would *increase* the maximum capacitance.",
+      "c": "It would *increase* the minimum capacitance.",
+      "d": "It would not change the capacitance values."
     },
-    {
-      "question": "5. What does the slope of the collector current (I_C) versus base-emitter voltage (V_BE) plot represent?",
-      "answers": {
-        "a": "Saturation current (I_S)",
-        "b": "Current gain (\u03b2)",
-        "c": "Emitter efficiency",
-        "d": "Thermal voltage (V_T)"
-      },
-      "correctAnswer": "a",
-      "difficulty": "intermediate"
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "5. What does the SPICE parameter `VFB` (Flat-Band Voltage) represent?",
+    "answers": {
+      "a": "The gate voltage where the channel first forms (threshold).",
+      "b": "The gate voltage required to break down the oxide.",
+      "c": "The gate voltage where the semiconductor energy bands are flat.",
+      "d": "The gate voltage where the device is in deep accumulation."
     },
-    {
-      "question": "6. How does the Gummel plot help in BJT characterization?",
-      "answers": {
-        "a": "By measuring thermal resistance",
-        "b": "By extracting parameters like saturation current and current gain",
-        "c": "By measuring power dissipation",
-        "d": "By analyzing frequency response"
-      },
-      "correctAnswer": "b",
-      "difficulty": "intermediate"
+    "correctAnswer": "c",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "6. A 'stretch-out' (a less steep slope) in the depletion region of a measured C-V curve is a strong indicator of what?",
+    "answers": {
+      "a": "A very thick gate oxide",
+      "b": "A very low substrate doping",
+      "c": "A high density of interface traps (like `NFS`)",
+      "d": "Polysilicon depletion"
     },
-    {
-      "question": "7. What parameter of a BJT is directly related to the ideality factor in the Gummel plot?",
-      "answers": {
-        "a": "Saturation current (I_S)",
-        "b": "Base-emitter voltage (V_BE)",
-        "c": "Emitter efficiency",
-        "d": "Thermal voltage (V_T)"
-      },
-      "correctAnswer": "a",
-      "difficulty": "advanced"
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "7. What is the main difference between a *low-frequency* C-V plot and a *high-frequency* C-V plot?",
+    "answers": {
+      "a": "The capacitance in accumulation is high for LF, low for HF.",
+      "b": "The capacitance in inversion is high for LF, but low for HF.",
+      "c": "The capacitance in inversion is low for LF, but high for HF.",
+      "d": "There is no difference."
     },
-    {
-      "question": "8. How can you determine the current gain (\u03b2) of a BJT from the Gummel plot?",
-      "answers": {
-        "a": "By calculating the slope of the base current (I_B) versus base-emitter voltage (V_BE) plot",
-        "b": "By calculating the slope of the collector current (I_C) versus base-emitter voltage (V_BE) plot",
-        "c": "By dividing base current (I_B) by collector current (I_C)",
-        "d": "By dividing collector current (I_C) by base current (I_B)"
-      },
-      "correctAnswer": "b",
-      "difficulty": "advanced"
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "8. The substrate doping (`NSUB`) is a key parameter in LEVEL 2/3. How is it primarily extracted from the C-V plot?",
+    "answers": {
+      "a": "From the maximum capacitance value in accumulation.",
+      "b": "From the minimum capacitance value (in depletion/inversion).",
+      "c": "From the flat-band voltage.",
+      "d": "From the slope in accumulation."
     },
-    {
-      "question": "9. What does the term 'early effect' refer to in the context of BJTs?",
-      "answers": {
-        "a": "Temperature dependence of collector current",
-        "b": "Voltage dependence of base current",
-        "c": "Voltage dependence of collector current",
-        "d": "Temperature dependence of base current"
-      },
-      "correctAnswer": "c",
-      "difficulty": "advanced"
+    "correctAnswer": "b",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "9. In advanced models (like LEVEL 6/BSIM), what is 'polysilicon depletion'?",
+    "answers": {
+      "a": "A 'stretch-out' of the C-V curve due to interface traps.",
+      "b": "The formation of a depletion region *in the polysilicon gate itself*, which reduces the total capacitance.",
+      "c": "The minority carriers in the channel failing to respond to the AC signal.",
+      "d": "The complete removal of the polysilicon gate during fabrication."
     },
-    {
-      "question": "10. In the Gummel plot, the linear region where the base current (I_B) is proportional to base-emitter voltage (V_BE) is known as the ______ region.",
-      "answers": {
-        "a": "Saturation",
-        "b": "Active",
-        "c": "Cut-off",
-        "d": "Breakdown"
-      },
-      "correctAnswer": "b",
-      "difficulty": "advanced"
-    }
+    "correctAnswer": "b",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "10. How do quantum mechanical (QM) effects (modeled in LEVEL 6) impact the C-V curve in strong inversion?",
+    "answers": {
+      "a": "They push charge *away* from the oxide, effectively *increasing* the oxide thickness and *lowering* the capacitance.",
+      "b": "They pull charge *closer* to the oxide, effectively *decreasing* the oxide thickness and *raising* the capacitance.",
+      "c": "They trap charge at the interface, which 'stretches out' the C-V curve.",
+      "d": "They allow charge to tunnel through the oxide, which increases gate current."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  }
+
   ]
 }
