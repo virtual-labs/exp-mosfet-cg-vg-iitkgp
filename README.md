@@ -7,7 +7,7 @@
 <b>Discipline | <b> Electronic Engineering 
 :--|:--|
 <b> Lab | <b> **Technology CAD Laboratory**
-<b> Experiment|     <b> **Extraction of diode SPICE parameters related to Capacitance-Voltage (C-V) characteristics**
+<b> Experiment|     <b> **Extraction of MOSFET LEVEL (1,2,3 and 6) SPICE parameters related to gate voltage Capacitance (Cg vs. Vg) characteristics**
 
 
 ### About the Experiment 
