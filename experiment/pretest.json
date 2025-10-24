@@ -1,39 +1,116 @@
-{
-  "version": 2.0,
+  {
+	  "version": 2.0,
   "questions": [
     {
-      "question": "This is a Sample Question 1?",
-      "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
-      },
-      "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
-      },
-      "correctAnswer": "a",
-      "difficulty": "beginner"
+    "question": "1. What two quantities are typically plotted against each other to characterize a MOSFET's gate capacitance?",
+    "answers": {
+      "a": "Gate Current and Gate Voltage",
+      "b": "Drain Current and Gate Voltage",
+      "c": "Gate Capacitance and Gate Voltage",
+      "d": "Gate Capacitance and Drain Voltage"
     },
-    {
-      "question": "This is a Sample Question 2?",
-      "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
-      },
-      "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
-      },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
-    }
+    "correctAnswer": "c",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "2. The maximum capacitance value, measured in the 'accumulation' region, is directly used to calculate which physical SPICE parameter?",
+    "answers": {
+      "a": "`VTO` (Threshold Voltage)",
+      "b": "`NSUB` (Substrate Doping)",
+      "c": "`TOX` (Oxide Thickness)",
+      "d": "`GAMMA` (Body Effect)"
+    },
+    "correctAnswer": "c",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "3. The *minimum* capacitance value, observed just before strong inversion, is primarily used to extract which SPICE parameter?",
+    "answers": {
+      "a": "`NSUB` (Substrate Doping)",
+      "b": "`TOX` (Oxide Thickness)",
+      "c": "`VMAX` (Max Drift Velocity)",
+      "d": "`LD` (Lateral Diffusion)"
+    },
+    "correctAnswer": "a",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "4. In the 'accumulation' region of an NMOS C-V plot (at negative gate voltage), the measured capacitance is high because...",
+    "answers": {
+      "a": "a depletion region has formed.",
+      "b": "the channel is strongly inverted.",
+      "c": "majority carriers (holes) are drawn to the oxide interface.",
+      "d": "the gate is leaking current."
+    },
+    "correctAnswer": "c",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "5. Why does the measured gate capacitance *decrease* as the gate voltage sweeps from accumulation into the 'depletion' region?",
+    "answers": {
+      "a": "A depletion layer forms, acting like a second capacitor in series with the oxide capacitor.",
+      "b": "The oxide itself becomes thinner.",
+      "c": "The channel charge starts to leak to the substrate.",
+      "d": "The mobility of the carriers decreases."
+    },
+    "correctAnswer": "a",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "6. In a *high-frequency* C-V measurement, why does the capacitance remain *low* in the 'inversion' region (unlike a low-frequency measurement)?",
+    "answers": {
+      "a": "The minority carriers in the channel cannot be generated or respond fast enough to the AC signal.",
+      "b": "The oxide breaks down at high frequency.",
+      "c": "The depletion region disappears at high frequency.",
+      "d": "The majority carriers in the substrate cannot respond."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "7. What is the primary visual effect of a high density of interface traps (e.g., `NFS` in LEVEL 3) on the C-V curve's shape?",
+    "answers": {
+      "a": "It makes the maximum capacitance much higher.",
+      "b": "It makes the minimum capacitance much lower.",
+      "c": "It causes a 'stretch-out,' making the slope of the curve in the depletion region less steep.",
+      "d": "It causes a sharp 'kink' at the threshold voltage."
+    },
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "8. Which SPICE parameter represents the gate voltage where there is no electric field in the silicon, typically extracted from the start of the 'depletion' slope?",
+    "answers": {
+      "a": "`VTO` (Threshold Voltage)",
+      "b": "`VFB` (Flat-Band Voltage)",
+      "c": "`GAMMA` (Body Effect)",
+      "d": "`PHI` (Surface Potential)"
+    },
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "9. In advanced models (LEVEL 6/BSIM), what physical effect in the *gate material itself* causes a slight *drop* in capacitance when the device is strongly inverted?",
+    "answers": {
+      "a": "Quantum mechanical effects",
+      "b": "Polysilicon depletion",
+      "c": "Oxide tunneling",
+      "d": "Interface traps"
+    },
+    "correctAnswer": "b",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "10. Quantum mechanical (QM) effects, modeled in LEVEL 6, cause the charge in the inversion layer to be pushed slightly away from the oxide, resulting in...",
+    "answers": {
+      "a": "a lower effective capacitance in inversion than the simple oxide capacitance.",
+      "b": "a higher effective capacitance in inversion.",
+      "c": "a complete stop of current flow.",
+      "d": "a change in the flat-band voltage."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  }
+
   ]
 }
