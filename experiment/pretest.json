@@ -2,114 +2,115 @@
 	  "version": 2.0,
   "questions": [
     {
-      "question": "1. What does the term 'Gummel plot' specifically refer to in the context of BJT characterization?",
-      "answers": {
-        "a": "A plot of base-emitter voltage (V_BE) versus collector current (I_C)",
-        "b": "A plot of base current (I_B) versus base-emitter voltage (V_BE)",
-        "c": "A plot of collector current (I_C) versus base current (I_B)",
-        "d": "A plot of base-emitter voltage (V_BE) versus base current (I_B)"
-      },
-      "correctAnswer": "b",
-      "difficulty": "beginner"
+    "question": "1. What two quantities are typically plotted against each other to characterize a MOSFET's gate capacitance?",
+    "answers": {
+      "a": "Gate Current and Gate Voltage",
+      "b": "Drain Current and Gate Voltage",
+      "c": "Gate Capacitance and Gate Voltage",
+      "d": "Gate Capacitance and Drain Voltage"
     },
-    {
-      "question": "2. In a Gummel plot, what does the slope of the base current (I_B) versus base-emitter voltage (V_BE) plot represent?",
-      "answers": {
-        "a": "Saturation current (I_S)",
-        "b": "Current gain (\u03b2)",
-        "c": "Emitter efficiency",
-        "d": "Thermal voltage (V_T)"
-      },
-      "correctAnswer": "a",
-      "difficulty": "beginner"
+    "correctAnswer": "c",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "2. The maximum capacitance value, measured in the 'accumulation' region, is directly used to calculate which physical SPICE parameter?",
+    "answers": {
+      "a": "`VTO` (Threshold Voltage)",
+      "b": "`NSUB` (Substrate Doping)",
+      "c": "`TOX` (Oxide Thickness)",
+      "d": "`GAMMA` (Body Effect)"
     },
-    {
-      "question": "3. The Gummel plot is commonly used to determine which of the following parameters of a BJT?",
-      "answers": {
-        "a": "Collector-emitter voltage (V_CE)",
-        "b": "Base-emitter voltage (V_BE)",
-        "c": "Saturation current (I_S)",
-        "d": "Thermal resistance (R_th)"
-      },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
+    "correctAnswer": "c",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "3. The *minimum* capacitance value, observed just before strong inversion, is primarily used to extract which SPICE parameter?",
+    "answers": {
+      "a": "`NSUB` (Substrate Doping)",
+      "b": "`TOX` (Oxide Thickness)",
+      "c": "`VMAX` (Max Drift Velocity)",
+      "d": "`LD` (Lateral Diffusion)"
     },
-    {
-      "question": "4. What is the primary purpose of characterizing a BJT using the Gummel plot method?",
-      "answers": {
-        "a": "To analyze power dissipation",
-        "b": "To optimize frequency response",
-        "c": "To extract key parameters like current gain and saturation current",
-        "d": "To measure voltage drop across the collector-emitter junction"
-      },
-      "correctAnswer": "c",
-      "difficulty": "intermediate"
+    "correctAnswer": "a",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "4. In the 'accumulation' region of an NMOS C-V plot (at negative gate voltage), the measured capacitance is high because...",
+    "answers": {
+      "a": "a depletion region has formed.",
+      "b": "the channel is strongly inverted.",
+      "c": "majority carriers (holes) are drawn to the oxide interface.",
+      "d": "the gate is leaking current."
     },
-    {
-      "question": "5. What does the ideality factor in a BJT refer to?",
-      "answers": {
-        "a": "A measure of how closely the BJT follows the ideal exponential relationship",
-        "b": "A measure of collector current efficiency",
-        "c": "A measure of base current leakage",
-        "d": "A measure of temperature dependence"
-      },
-      "correctAnswer": "a",
-      "difficulty": "intermediate"
+    "correctAnswer": "c",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "5. Why does the measured gate capacitance *decrease* as the gate voltage sweeps from accumulation into the 'depletion' region?",
+    "answers": {
+      "a": "A depletion layer forms, acting like a second capacitor in series with the oxide capacitor.",
+      "b": "The oxide itself becomes thinner.",
+      "c": "The channel charge starts to leak to the substrate.",
+      "d": "The mobility of the carriers decreases."
     },
-    {
-      "question": "6. How does the Gummel plot help in analyzing BJT operation in different regions?",
-      "answers": {
-        "a": "By identifying breakdown voltage",
-        "b": "By showing linear and saturation regions clearly",
-        "c": "By measuring thermal resistance",
-        "d": "By calculating power gain"
-      },
-      "correctAnswer": "b",
-      "difficulty": "intermediate"
+    "correctAnswer": "a",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "6. In a *high-frequency* C-V measurement, why does the capacitance remain *low* in the 'inversion' region (unlike a low-frequency measurement)?",
+    "answers": {
+      "a": "The minority carriers in the channel cannot be generated or respond fast enough to the AC signal.",
+      "b": "The oxide breaks down at high frequency.",
+      "c": "The depletion region disappears at high frequency.",
+      "d": "The majority carriers in the substrate cannot respond."
     },
-    {
-      "question": "7. What does the slope of the collector current (I_C) versus base-emitter voltage (V_BE) plot determine?",
-      "answers": {
-        "a": "Emitter efficiency",
-        "b": "Saturation current (I_S)",
-        "c": "Current gain (\u03b2)",
-        "d": "Thermal voltage (V_T)"
-      },
-      "correctAnswer": "b",
-      "difficulty": "advanced"
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "7. What is the primary visual effect of a high density of interface traps (e.g., `NFS` in LEVEL 3) on the C-V curve's shape?",
+    "answers": {
+      "a": "It makes the maximum capacitance much higher.",
+      "b": "It makes the minimum capacitance much lower.",
+      "c": "It causes a 'stretch-out,' making the slope of the curve in the depletion region less steep.",
+      "d": "It causes a sharp 'kink' at the threshold voltage."
     },
-    {
-      "question": "8. In a Gummel plot, what does the term 'early effect' refer to?",
-      "answers": {
-        "a": "Voltage dependence of collector current",
-        "b": "Temperature dependence of base current",
-        "c": "Voltage dependence of base current",
-        "d": "Temperature dependence of collector current"
-      },
-      "correctAnswer": "a",
-      "difficulty": "advanced"
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "8. Which SPICE parameter represents the gate voltage where there is no electric field in the silicon, typically extracted from the start of the 'depletion' slope?",
+    "answers": {
+      "a": "`VTO` (Threshold Voltage)",
+      "b": "`VFB` (Flat-Band Voltage)",
+      "c": "`GAMMA` (Body Effect)",
+      "d": "`PHI` (Surface Potential)"
     },
-    {
-      "question": "9. How can the Gummel plot aid in optimizing BJT circuit design?",
-      "answers": {
-        "a": "By minimizing thermal resistance",
-        "b": "By maximizing current gain",
-        "c": "By ensuring proper biasing and performance",
-        "d": "By increasing breakdown voltage"
-      },
-      "correctAnswer": "c",
-      "difficulty": "advanced"
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "9. In advanced models (LEVEL 6/BSIM), what physical effect in the *gate material itself* causes a slight *drop* in capacitance when the device is strongly inverted?",
+    "answers": {
+      "a": "Quantum mechanical effects",
+      "b": "Polysilicon depletion",
+      "c": "Oxide tunneling",
+      "d": "Interface traps"
     },
-    {
-      "question": "10. What region of operation is characterized by a Gummel plot where collector current (I_C) remains relatively constant with changes in base-emitter voltage (V_BE)?",
-      "answers": {
-        "a": "Cut-off",
-        "b": "Active",
-        "c": "Saturation",
-        "d": "Breakdown"
-      },
-      "correctAnswer": "c",
-      "difficulty": "advanced"
-    }
+    "correctAnswer": "b",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "10. Quantum mechanical (QM) effects, modeled in LEVEL 6, cause the charge in the inversion layer to be pushed slightly away from the oxide, resulting in...",
+    "answers": {
+      "a": "a lower effective capacitance in inversion than the simple oxide capacitance.",
+      "b": "a higher effective capacitance in inversion.",
+      "c": "a complete stop of current flow.",
+      "d": "a change in the flat-band voltage."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  }
+
   ]
 }
