@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOSFET Cg-Vg Parameter Extractor</title>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF (Core) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom styles for better number inputs */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        /* Ensure charts are responsive but don't shrink too small */
+        .chart-container {
+            position: relative;
+            min-height: 400px;
+            width: 100%;
+        }
+
+        /* Styles for the hidden PDF report template */
+        #report-content {
+            width: 8.5in;
+            min-height: 11in;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 0.5in;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        .report-header { text-align: left; margin-bottom: 20px; }
+        .report-header h1 { font-size: 18px; font-weight: 700; margin: 0; }
+        .report-header p { font-size: 14px; margin: 4px 0; }
+        .report-date-time { margin-bottom: 30px; }
+        .report-date-time p { font-size: 12px; margin: 2px 0; color: #333; }
+        .report-main-title { text-align: center; margin-bottom: 10px; }
+        .report-main-title h2 { font-size: 24px; font-weight: 700; color: #005a9c; margin: 0; }
+        .report-section-title { font-size: 16px; font-weight: 700; color: #333; margin-top: 20px; border-bottom: 2px solid #eee; padding-bottom: 4px;}
+
+        .report-table-container {
+            max-height: 250px; /* Limit table height to prevent extreme length */
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+        .report-table { width: 100%; border-collapse: collapse; }
+        .report-table th, .report-table td {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            font-size: 10px; 
+            text-align: left;
+        }
+        .report-table th { background-color: #f4f4f4; font-weight: 600; }
+        .report-table td { font-family: 'Courier New', Courier, monospace; }
+
+        .report-params { margin-top: 10px; }
+        .report-params strong { font-size: 13px; }
+        .report-params pre {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            background-color: #f8f8f8;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .report-chart-container {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .report-footer { margin-top: 40px; font-size: 14px; }
+        .report-signatures { display: flex; justify-content: space-between; margin-bottom: 40px; }
+        .report-signature-block { width: 45%; border-top: 1px solid #000; padding-top: 8px; }
+
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+            MOSFET Gate Capacitance (Cg-Vg) Extractor
+        </h1>
+
+        <!-- View 1: Data Extraction -->
+        <div id="extractionView">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Left Column: Data Input & Controls -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4">1. Input Data & Extraction</h2>
+                    
+                    <!-- Data Input Textarea -->
+                    <label for="dataInput" class="block text-sm font-medium text-gray-600 mb-2">
+                        Enter your Vg, Cg data (one pair per line):
+                    </label>
+                    <textarea id="dataInput" rows="12" class="w-full p-3 border border-gray-300 rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500">
+-2.50,0.0000000000626
+-2.30,0.0000000000626
+-2.10,0.0000000000626
+-1.90,0.0000000000626
+-1.70,0.0000000000626
+-1.50,0.0000000000625
+-1.30,0.0000000000621
+-1.10,0.0000000000604
+-0.900,0.0000000000528
+-0.700,0.0000000000357
+-0.500,0.0000000000240
+-0.300,0.0000000000183
+-0.100,0.0000000000152
+0.100,0.0000000000133
+0.300,0.0000000000119
+0.500,0.0000000000111
+0.700,0.0000000000108
+0.900,0.0000000000108
+1.10,0.0000000000107
+1.30,0.0000000000107
+1.50,0.0000000000107
+1.70,0.0000000000106
+1.90,0.0000000000106
+2.10,0.0000000000106
+2.30,0.0000000000106
+2.50,0.0000000000106
+</textarea>
+                    
+                    <!-- Assumed Parameters -->
+                    <h3 class="text-lg font-semibold text-gray-700 col-span-1 sm:col-span-2 mt-4">Device Parameters (Assumed)</h3>
+                    <p class="text-xs text-gray-500 mb-2">
+                        Device Area is required to extract C/cm² (COX) and Doping (NSUB) from total C (Farads).
+                    </p>
+                    <div class="grid grid-cols-1">
+                        <div>
+                            <label for="paramArea" class="block text-sm font-medium text-gray-600">Device Area (A) [cm²]</label>
+                            <input type="number" id="paramArea" value="1e-6" class="w-full p-2 mt-1 bg-gray-50 border border-gray-300 rounded-md font-mono text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons -->
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <button id="plotDataBtn" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-150">
+                            Plot my Data
+                        </button>
+                        <button id="extractParamsBtn" class="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-150">
+                            Extract Parameters
+                        </button>
+                    </div>
+                    
+                    <!-- Results Output -->
+                    <div id="resultsOutput" class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <h3 class="text-lg font-semibold text-gray-700 col-span-1 sm:col-span-3">Extracted Parameters:</h3>
+                        <div>
+                            <label for="resCOX" class="block text-sm font-medium text-gray-600">COX [F/cm²]</label>
+                            <input type="text" id="resCOX" readonly class="w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-sm">
+                        </div>
+                        <div>
+                            <label for="resTOX" class="block text-sm font-medium text-gray-600">TOX [cm]</label>
+                            <input type="text" id="resTOX" readonly class="w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-sm">
+                        </div>
+                        <div>
+                            <label for="resNSUB" class="block text-sm font-medium text-gray-600">NSUB [cm⁻³]</label>
+                            <input type="text" id="resNSUB" readonly class="w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-sm">
+                        </div>
+                    </div>
+                    
+                    <!-- Simulation Button -->
+                    <button id="simulateBtn" class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition duration-150 mt-6 font-semibold disabled:bg-gray-400" disabled>
+                        Go to Simulation &raquo;
+                    </button>
+                </div>
+
+                <!-- Right Column: Data Plot -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4">Measured Gate Capacitance (Cg vs. Vg)</h2>
+                    <div class="chart-container">
+                        <canvas id="cgChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- View 2: Simulation -->
+        <div id="simulationView" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Left Column: Simulation Controls -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4">2. Simulation Controls</h2>
+                    
+                    <button id="backToExtractBtn" class="w-full bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-150 mb-6 font-semibold">
+                        &laquo; Back to Extractor
+                    </button>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="simTOX" class="block text-sm font-medium text-gray-600">TOX [cm]</label>
+                            <input type="number" id="simTOX" step="1e-8" class="w-full p-2 mt-1 border border-gray-300 rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="simNSUB" class="block text-sm font-medium text-gray-600">NSUB [cm⁻³]</label>
+                            <input type="number" id="simNSUB" step="1e14" class="w-full p-2 mt-1 border border-gray-300 rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="simArea" class="block text-sm font-medium text-gray-600">Area [cm²]</label>
+                            <input type="number" id="simArea" step="1e-8" class="w-full p-2 mt-1 border border-gray-300 rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="simVfb" class="block text-sm font-medium text-gray-600">Flat-Band (Vfb) [V]</label>
+                            <input type="number" id="simVfb" step="0.01" class.value="1e-7" class="w-full p-2 mt-1 border border-gray-300 rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="simCOX" class="block text-sm font-medium text-gray-600">COX [F/cm²]</label>
+                            <input type="text" id="simCOX" readonly class="w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-sm">
+                        </div>
+                        <div>
+                            <label for="simVth" class="block text-sm font-medium text-gray-600">Threshold (Vth) [V]</label>
+                            <input type="text" id="simVth" readonly class="w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-sm">
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">
+                        COX and Vth are calculated from the parameters above. Change any tunable parameter to regenerate the plot.
+                    </p>
+                </div>
+
+                <!-- Right Column: Simulation Plot -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4">Simulated vs. Measured Gate Capacitance</h2>
+                    <div class="chart-container">
+                        <canvas id="simChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 text-center flex flex-wrap justify-center gap-4">
+                <button id="generateReportBtn" class="bg-teal-600 text-white py-3 px-8 rounded-md hover:bg-teal-700 transition duration-150 font-semibold shadow-md disabled:bg-gray-400" disabled>
+                    Generate Report
+                </button>
+                <button id="downloadSimDataBtn" class="bg-blue-600 text-white py-3 px-8 rounded-md hover:bg-blue-700 transition duration-150 font-semibold shadow-md disabled:bg-gray-400" disabled>
+                    Download Simulated Data
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 
+    ====================================================================
+    HIDDEN REPORT TEMPLATE
+    ====================================================================
+    -->
+    <div id="report-container" style="position: absolute; left: -9999px; width: 8.5in;">
+        <div id="report-content">
+            <!-- Header -->
+            <div class="report-header">
+                <h1>Extraction of MOSFET LEVEL (1,2,3 and 6) SPICE parameters related to gate voltage Capacitance (Cg vs. Vg)</h1>
+                <p>TCAD Lab IITKGP</p>
+            </div>
+            <div class="report-date-time">
+                <p id="report-date"></p>
+                <p id="report-time"></p>
+            </div>
+            <div class="report-main-title">
+                <h2>Gate Capacitance (Cg-Vg) Extraction & Simulation Results</h2>
+            </div>
+
+            <!-- Section 1: Measured Data -->
+            <h3 class="report-section-title">1. Measured Data & Extracted Parameters</h3>
+            <div class="report-table-container">
+                <table class="report-table" id="measured-data-table">
+                    <thead>
+                        <tr><th>Vg (V)</th><th>Cg (F)</th></tr>
+                    </thead>
+                    <tbody id="measured-data-body">
+                        <!-- Data will be injected here by JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="report-params">
+                <strong>Extracted Parameters (using Assumed Values):</strong>
+                <pre id="extracted-params-pre"></pre>
+            </div>
+
+            <!-- Section 2: Simulated Data -->
+            <h3 class="report-section-title">2. Simulated Data & Tuned Parameters</h3>
+            <div class="report-table-container">
+                <table class="report-table" id="simulated-data-table">
+                    <thead>
+                        <tr><th>Vg (V)</th><th>Cg (F)</th></tr>
+                    </thead>
+                    <tbody id="simulated-data-body">
+                        <!-- Data will be injected here by JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="report-params">
+                <strong>Tuned Parameters:</strong>
+                <pre id="tuned-params-pre"></pre>
+            </div>
+
+            <!-- Section 3: Chart -->
+            <h3 class="report-section-title">3. Simulated vs. Measured Gate Capacitance</h3>
+            <div class="report-chart-container">
+                <img id="report-chart-img" src="" alt="Simulated vs. Measured Cg-Vg Plot" style="width: 100%; height: auto;" />
+            </div>
+
+            <!-- Footer -->
+            <div class="report-footer">
+                <div class="report-signatures">
+                    <div class="report-signature-block">Signature of Student</div>
+                    <div class="report-signature-block" style="text-align: right;">Signature of Faculty</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Physical Constants ---
+        const q_charge = 1.602e-19;     // Elementary charge (C)
+        const EPS0 = 8.854e-14;  // Permittivity of free space (F/cm)
+        const K_SI = 11.7;       // Dielectric constant of Silicon
+        const K_OX = 3.9;        // Dielectric constant of SiO2
+        const EPS_SI = K_SI * EPS0;
+        const EPS_OX = K_OX * EPS0;
+        const KT_Q = 0.0259;     // Thermal voltage at 300K (V)
+        const NI = 1.0e10;       // Intrinsic carrier concentration in Si (cm⁻³)
+
+        // --- DOM Elements ---
+        const dataInput = document.getElementById('dataInput');
+        const paramArea = document.getElementById('paramArea');
+        
+        const plotDataBtn = document.getElementById('plotDataBtn');
+        const extractParamsBtn = document.getElementById('extractParamsBtn');
+        const simulateBtn = document.getElementById('simulateBtn');
+        const backToExtractBtn = document.getElementById('backToExtractBtn');
+        
+        const extractionView = document.getElementById('extractionView');
+        const simulationView = document.getElementById('simulationView');
+        
+        const resCOX = document.getElementById('resCOX');
+        const resTOX = document.getElementById('resTOX');
+        const resNSUB = document.getElementById('resNSUB');
+        
+        const simTOX = document.getElementById('simTOX');
+        const simNSUB = document.getElementById('simNSUB');
+        const simArea = document.getElementById('simArea');
+        const simVfb = document.getElementById('simVfb');
+        const simCOX = document.getElementById('simCOX');
+        const simVth = document.getElementById('simVth');
+        
+        const generateReportBtn = document.getElementById('generateReportBtn');
+        const downloadSimDataBtn = document.getElementById('downloadSimDataBtn');
+        
+        const cgChartCtx = document.getElementById('cgChart').getContext('2d');
+        const simChartCtx = document.getElementById('simChart').getContext('2d');
+
+        // --- Chart Instances ---
+        let cgChartInstance = null;
+        let simChartInstance = null;
+        
+        // --- Global State ---
+        let extractedParams = { COX: null, TOX: null, NSUB: null, Vfb_ext: -0.9 }; // Add default Vfb
+
+        // --- Utility Functions ---
+
+        /**
+         * Parses the raw data from the textarea.
+         * @returns {Array<Object>} Array of {vg, cg} points.
+         */
+        function parseData() {
+            const text = dataInput.value.trim();
+            return text.split('\n')
+                .map(line => {
+                    const parts = line.split(',');
+                    if (parts.length === 2) {
+                        const vg = parseFloat(parts[0]);
+                        const cg = parseFloat(parts[1]);
+                        if (!isNaN(vg) && !isNaN(cg) && cg > 0) {
+                            return { vg, cg };
+                        }
+                    }
+                    return null;
+                })
+                .filter(p => p !== null)
+                .sort((a, b) => a.vg - b.vg); // Sort by voltage
+        }
+
+        /**
+         * Performs linear regression on a set of {x, y} points.
+         * @param {Array<Object>} points - Array of {x, y} objects.
+         * @returns {Object} { m: slope, c: y-intercept }
+         */
+        function linearRegression(points) {
+            const n = points.length;
+            if (n < 2) return { m: 0, c: 0 };
+            
+            let sumX = 0, sumY = 0, sumXY = 0, sumXsq = 0;
+            
+            points.forEach(p => {
+                sumX += p.x;
+                sumY += p.y;
+                sumXY += p.x * p.y;
+                sumXsq += p.x * p.x;
+            });
+
+            const denominator = (n * sumXsq - sumX * sumX);
+            if (Math.abs(denominator) < 1e-10) return { m: 0, c: 0 }; // Avoid division by zero
+
+            const m = (n * sumXY - sumX * sumY) / denominator;
+            const c = (sumY - m * sumX) / n;
+            
+            return { m, c };
+        }
+        
+        /**
+         * Generic function to create/update an Cg-Vg plot (linear).
+         */
+        function createChart(ctx, chartInstance, datasets, title) {
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            
+            return new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Vg (V)'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            title: {
+                                display: true,
+                                text: 'Gate Capacitance (F)'
+                            },
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return value.toExponential(2);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += `(${context.parsed.x.toFixed(3)}V, ${context.parsed.y.toExponential(3)}F)`;
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            display: true
+                        }
+                    },
+                    elements: {
+                        point: {
+                            radius: 3
+                        },
+                        line: {
+                            tension: 0 // Straight lines between points
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Core Logic Functions ---
+
+        /**
+         * Plots the user-provided data on the extraction chart.
+         */
+        function plotData() {
+            const data = parseData();
+            if (data.length === 0) {
+                return;
+            }
+            
+            const cgData = data.map(p => ({ x: p.vg, y: p.cg }));
+            
+            const datasets = [
+                {
+                    label: 'Cg (Measured)',
+                    data: cgData,
+                    borderColor: 'rgb(29, 78, 216)',
+                    backgroundColor: 'rgba(29, 78, 216, 0.5)',
+                    showLine: true
+                }
+            ];
+            
+            cgChartInstance = createChart(cgChartCtx, cgChartInstance, datasets, 'Measured Gate Capacitance');
+        }
+
+        /**
+         * Extracts SPICE parameters from the data.
+         */
+        function extractParameters() {
+            const data = parseData();
+            const Area = parseFloat(paramArea.value);
+
+            if (isNaN(Area) || Area <= 0) {
+                alert("Please enter a valid, positive Device Area (A).");
+                return;
+            }
+            if (data.length < 5) {
+                alert("Not enough data points to perform extraction.");
+                return;
+            }
+
+            // --- 1. Extract COX and TOX ---
+            // C_ox_total is the max capacitance in accumulation (most negative Vg)
+            const C_ox_total = Math.max(...data.filter(p => p.vg < 0).map(p => p.cg));
+            if (C_ox_total <= 0) {
+                alert("Could not find valid accumulation capacitance (C_max).");
+                return;
+            }
+            
+            const COX = C_ox_total / Area;
+            const TOX = EPS_OX / COX;
+
+            // --- 2. Extract NSUB ---
+            // Find C_min_total in inversion (most positive Vg)
+            const C_min_total = Math.min(...data.filter(p => p.vg > 0.5).map(p => p.cg));
+            if (C_min_total <= 0) {
+                alert("Could not find valid inversion capacitance (C_min).");
+                return;
+            }
+
+            // Find the depletion region (where C is between C_min and C_ox)
+            const C_dep_region = data.filter(p => p.cg > C_min_total * 1.1 && p.cg < C_ox_total * 0.9);
+            if (C_dep_region.length < 3) {
+                alert("Could not find a clear depletion region. Check data.");
+                return;
+            }
+            
+            // Plot 1/Cg^2 vs. Vg
+            const transformedData = C_dep_region.map(p => ({
+                x: p.vg,
+                y: 1.0 / (p.cg * p.cg)
+            }));
+            
+            const regression = linearRegression(transformedData);
+            const slope = regression.m; // d(1/C^2)/dVg
+            const intercept = regression.c;
+
+            if (slope <= 0) {
+                alert(`Extraction failed: Invalid slope for 1/C^2 plot (slope = ${slope.toExponential(2)}). Data may be for n-sub.`);
+                return;
+            }
+
+            // slope = 2 / (q_charge * EPS_SI * NSUB * Area^2)
+            const NSUB = 2.0 / (q_charge * EPS_SI * Area * Area * slope);
+
+            // Estimate Vfb from the x-intercept of the 1/C^2 plot
+            const Vfb_ext = -intercept / slope;
+
+            // --- Store and Display Results ---
+            extractedParams.COX = COX;
+            extractedParams.TOX = TOX;
+            extractedParams.NSUB = NSUB;
+            extractedParams.Vfb_ext = Vfb_ext;
+            
+            resCOX.value = extractedParams.COX.toExponential(4);
+            resTOX.value = extractedParams.TOX.toExponential(4);
+            resNSUB.value = extractedParams.NSUB.toExponential(4);
+
+            // --- Enable Simulation Button ---
+            simulateBtn.disabled = false;
+        }
+
+        /**
+         * Calculates capacitance for the HF C-V simulation model.
+         * This uses a more accurate physics-based model.
+         */
+        function calculateGateCapacitance(Vg, TOX_sim, NSUB_sim, Area_sim, Vfb_sim) {
+            // 1. Calculate derived parameters
+            const COX_sim = EPS_OX / TOX_sim;
+            const C_ox_total = COX_sim * Area_sim;
+            
+            // Fermi potential
+            const phi_f = KT_Q * Math.log(NSUB_sim / NI);
+            
+            // Gamma (body effect coefficient)
+            const gamma = Math.sqrt(2 * q_charge * EPS_SI * NSUB_sim) / COX_sim;
+            
+            // 2. Determine region and calculate Cg
+            if (Vg < Vfb_sim) {
+                // Accumulation
+                return C_ox_total;
+            }
+            
+            // --- Depletion & Inversion ---
+            // Solve Vg = Vfb + phi_s + gamma * sqrt(phi_s) for phi_s
+            // (Vg - Vfb - phi_s)^2 = gamma^2 * phi_s
+            // phi_s^2 - (2*(Vg - Vfb) + gamma^2) * phi_s + (Vg - Vfb)^2 = 0
+            // This is a quadratic equation a*x^2 + b*x + c = 0 where x = phi_s
+            const a = 1.0;
+            const b = -(2 * (Vg - Vfb_sim) + gamma * gamma);
+            const c = (Vg - Vfb_sim) * (Vg - Vfb_sim);
+            
+            const discriminant = b * b - 4 * a * c;
+            if (discriminant < 0) {
+                // Should not happen for Vg > Vfb
+                return C_ox_total;
+            }
+            
+            // Use the solution for phi_s that is < (Vg - Vfb)
+            const phi_s = (-b - Math.sqrt(discriminant)) / (2 * a);
+
+            if (phi_s < 2 * phi_f) {
+                // Depletion
+                const C_dep = Area_sim * Math.sqrt(q_charge * EPS_SI * NSUB_sim / (2 * phi_s));
+                return 1.0 / ( (1.0 / C_ox_total) + (1.0 / C_dep) );
+            } else {
+                // Inversion (HF model, phi_s is pinned at 2*phi_f)
+                const C_dep_max = Area_sim * Math.sqrt(q_charge * EPS_SI * NSUB_sim / (4 * phi_f)); // W_dep_max
+                return 1.0 / ( (1.0 / C_ox_total) + (1.0 / C_dep_max) );
+            }
+        }
+
+
+        /**
+         * Switches to the simulation view.
+         */
+        function showSimulationView() {
+            // Ensure parameters are extracted first
+            if (extractedParams.TOX === null) {
+                alert("Please extract parameters before simulating.");
+                return; 
+            }
+            
+            // Populate sim inputs
+            simTOX.value = extractedParams.TOX;
+            simNSUB.value = extractedParams.NSUB;
+            simArea.value = parseFloat(paramArea.value);
+            simVfb.value = extractedParams.Vfb_ext; // Use extracted Vfb
+            
+            // Show/hide views
+            extractionView.classList.add('hidden');
+            simulationView.classList.remove('hidden');
+            
+            // Run initial simulation
+            updateSimulation();
+        }
+
+        /**
+         * Switches back to the extraction view.
+         */
+        function showExtractionView() {
+            simulationView.classList.add('hidden');
+            extractionView.classList.remove('hidden');
+        }
+        
+        /**
+         * Recalculates derived simulation parameters.
+         */
+        function updateSimDerivedParams() {
+            try {
+                const TOX_sim = parseFloat(simTOX.value);
+                const NSUB_sim = parseFloat(simNSUB.value);
+                const Vfb_sim = parseFloat(simVfb.value);
+
+                if (isNaN(TOX_sim) || TOX_sim <= 0) {
+                    simCOX.value = "---";
+                    simVth.value = "---";
+                    return;
+                }
+                
+                const COX_sim = EPS_OX / TOX_sim;
+                simCOX.value = COX_sim.toExponential(4);
+                
+                if (isNaN(NSUB_sim) || NSUB_sim <= 0 || isNaN(Vfb_sim)) {
+                    simVth.value = "---";
+                    return;
+                }
+
+                // Calculate Vth
+                const phi_f = KT_Q * Math.log(NSUB_sim / NI);
+                const V_th = Vfb_sim + 2 * phi_f + (Math.sqrt(2 * q_charge * EPS_SI * NSUB_sim * (2 * phi_f))) / COX_sim;
+                simVth.value = V_th.toFixed(4);
+
+            } catch (e) {
+                simCOX.value = "Error";
+                simVth.value = "Error";
+            }
+        }
+
+        /**
+         * Updates the simulation plot based on sim input values.
+         */
+        function updateSimulation() {
+            // Update derived param displays
+            updateSimDerivedParams();
+
+            // Read sim values
+            const TOX_sim = parseFloat(simTOX.value);
+            const NSUB_sim = parseFloat(simNSUB.value);
+            const Area_sim = parseFloat(simArea.value);
+            const Vfb_sim = parseFloat(simVfb.value);
+            
+            if (isNaN(TOX_sim) || isNaN(NSUB_sim) || isNaN(Area_sim) || isNaN(Vfb_sim) || TOX_sim <= 0 || NSUB_sim <= 0 || Area_sim <= 0) {
+                return; // Invalid inputs
+            }
+
+            // Generate simulated data
+            const simData = getSimulatedDataPoints();
+            const cgSimData = simData.map(p => ({ x: p.vg, y: p.cg }));
+            
+            // Get original measured data for comparison
+            const measuredData = parseData();
+            const cgMeasData = measuredData.map(p => ({ x: p.vg, y: p.cg }));
+
+            const datasets = [
+                {
+                    label: 'Cg (Simulated)',
+                    data: cgSimData,
+                    borderColor: 'rgb(220, 38, 38)',
+                    backgroundColor: 'rgba(220, 38, 38, 0.5)',
+                    showLine: true,
+                    pointRadius: 0, // Hide points for a smooth line
+                    borderDash: [5, 5] // Dashed line
+                },
+                {
+                    label: 'Cg (Measured)',
+                    data: cgMeasData,
+                    borderColor: 'rgb(29, 78, 216)',
+                    backgroundColor: 'rgba(29, 78, 216, 0.5)',
+                    showLine: true
+                }
+            ];
+            
+            simChartInstance = createChart(simChartCtx, simChartInstance, datasets, 'Simulated vs. Measured Gate Capacitance');
+
+            // Enable report/download buttons
+            generateReportBtn.disabled = false;
+            downloadSimDataBtn.disabled = false;
+        }
+
+        /**
+         * Generates an array of simulated data points based on current sim inputs.
+         * @returns {Array<Object>} Array of {vg, cg} points
+         */
+        function getSimulatedDataPoints() {
+            // Read sim values
+            const TOX_sim = parseFloat(simTOX.value);
+            const NSUB_sim = parseFloat(simNSUB.value);
+            const Area_sim = parseFloat(simArea.value);
+            const Vfb_sim = parseFloat(simVfb.value);
+            
+            if (isNaN(TOX_sim) || isNaN(NSUB_sim) || isNaN(Area_sim) || isNaN(Vfb_sim) || TOX_sim <= 0 || NSUB_sim <= 0 || Area_sim <= 0) {
+                return []; // Invalid inputs
+            }
+
+            const simData = [];
+            const data = parseData();
+            if (data.length === 0) return [];
+
+            const vMin = Math.min(...data.map(p => p.vg));
+            const vMax = Math.max(...data.map(p => p.vg));
+            const numSteps = 100;
+            const vStep = (vMax - vMin) / numSteps;
+            
+            for (let v = vMin; v <= vMax; v += vStep) {
+                const cg_calc = calculateGateCapacitance(v, TOX_sim, NSUB_sim, Area_sim, Vfb_sim);
+                simData.push({ vg: v, cg: cg_calc });
+            }
+            // Ensure the last point is included
+            const cg_calc_last = calculateGateCapacitance(vMax, TOX_sim, NSUB_sim, Area_sim, Vfb_sim);
+            simData.push({ vg: vMax, cg: cg_calc_last });
+
+            return simData;
+        }
+
+        /**
+         * Generates and downloads a PDF report using html2canvas.
+         */
+        function generateReport() {
+            // 0. Check if data is available
+            if (!simChartInstance || !extractedParams.TOX) {
+                alert("Please extract parameters and simulate data first.");
+                return;
+            }
+
+            const btn = document.getElementById('generateReportBtn');
+            btn.textContent = 'Generating...';
+            btn.disabled = true;
+
+            try {
+                // 1. Get all data
+                const measuredData = parseData();
+                const simulatedData = getSimulatedDataPoints();
+                const chartImageData = simChartInstance.toBase64Image('image/png', 1.0);
+                const now = new Date();
+
+                // 2. Populate Header
+                document.getElementById('report-date').textContent = `Date: ${now.toLocaleDateString()}`;
+                document.getElementById('report-time').textContent = `Time: ${now.toLocaleTimeString()}`;
+
+                // 3. Populate Measured Data Table
+                const measuredTableBody = document.getElementById('measured-data-body');
+                measuredTableBody.innerHTML = ''; // Clear old data
+                measuredData.forEach(p => {
+                    const row = `<tr><td>${p.vg.toFixed(4)}</td><td>${p.cg.toExponential(6)}</td></tr>`;
+                    measuredTableBody.innerHTML += row;
+                });
+
+                // 4. Populate Extracted Params
+                const extractedParamsPre = document.getElementById('extracted-params-pre');
+                extractedParamsPre.textContent = 
+`--- Assumed ---
+Area (A):        ${parseFloat(paramArea.value).toExponential(4)} cm²
+--- Extracted ---
+COX:             ${resCOX.value} F/cm²
+TOX:             ${resTOX.value} cm
+NSUB:            ${resNSUB.value} cm⁻³
+Vfb (estimated): ${extractedParams.Vfb_ext.toFixed(4)} V`;
+
+                // 5. Populate Simulated Data Table
+                const simulatedTableBody = document.getElementById('simulated-data-body');
+                simulatedTableBody.innerHTML = ''; // Clear old data
+                simulatedData.forEach(p => {
+                    const row = `<tr><td>${p.vg.toFixed(4)}</td><td>${p.cg.toExponential(6)}</td></tr>`;
+                    simulatedTableBody.innerHTML += row;
+                });
+
+                // 6. Populate Tuned Params
+                const tunedParamsPre = document.getElementById('tuned-params-pre');
+                tunedParamsPre.textContent = 
+`--- Tuned ---
+TOX:             ${parseFloat(simTOX.value).toExponential(4)} cm
+NSUB:            ${parseFloat(simNSUB.value).toExponential(4)} cm⁻³
+Area (A):        ${parseFloat(simArea.value).toExponential(4)} cm²
+Vfb:             ${parseFloat(simVfb.value).toFixed(4)} V
+--- Calculated ---
+COX:             ${simCOX.value} F/cm²
+Vth:             ${simVth.value} V`;
+
+                // 7. Add Chart Image
+                const reportChartImg = document.getElementById('report-chart-img');
+                reportChartImg.src = chartImageData;
+
+                // 8. Run html2canvas
+                const content = document.getElementById('report-content');
+                const { jsPDF } = window.jspdf;
+
+                // Use a timeout to allow the <img> tag to load the src
+                setTimeout(() => {
+                    html2canvas(content, {
+                        scale: 2, // Higher scale for better resolution
+                        useCORS: true,
+                        logging: false,
+                        windowWidth: content.scrollWidth,
+                        windowHeight: content.scrollHeight
+                    }).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        
+                        const pdf = new jsPDF('p', 'pt', 'letter');
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+                        const canvasWidth = canvas.width;
+                        const canvasHeight = canvas.height;
+                        const canvasAspectRatio = canvasHeight / canvasWidth;
+
+                        let finalPdfWidth = pdfWidth;
+                        let finalPdfHeight = pdfWidth * canvasAspectRatio;
+
+                        if (finalPdfHeight > pdfHeight) {
+                            finalPdfHeight = pdfHeight;
+                            finalPdfWidth = pdfHeight / canvasAspectRatio;
+                        }
+                        
+                        const xOffset = (pdfWidth - finalPdfWidth) / 2;
+
+                        pdf.addImage(imgData, 'PNG', xOffset, 0, finalPdfWidth, finalPdfHeight, undefined, 'FAST');
+                        pdf.save('mosfet_cg_vg_report.pdf');
+
+                        // Restore button
+                        btn.textContent = 'Generate Report';
+                        btn.disabled = false;
+                    }).catch(err => {
+                        console.error("Error generating PDF:", err);
+                        alert("An error occurred while generating the report. See console for details.");
+                        btn.textContent = 'Generate Report';
+                        btn.disabled = false;
+                    });
+                }, 200); // 200ms delay to ensure image is fully loaded into the template
+
+            } catch (error) {
+                console.error("Error preparing report:", error);
+                alert("An error occurred while preparing the report. See console for details.");
+                btn.textContent = 'Generate Report';
+                btn.disabled = false;
+            }
+        }
+
+        /**
+         * Generates and downloads a CSV file of the simulated data.
+         */
+        function downloadSimulatedData() {
+            // 0. Check if data is available
+            if (!simChartInstance) {
+                alert("Please simulate data first.");
+                return;
+            }
+
+            const btn = document.getElementById('downloadSimDataBtn');
+            btn.textContent = 'Downloading...';
+            btn.disabled = true;
+
+            try {
+                // 1. Get simulated data
+                const simulatedData = getSimulatedDataPoints();
+                if (simulatedData.length === 0) {
+                    alert("No simulated data to download.");
+                    return;
+                }
+
+                // 2. Create CSV content
+                let csvContent = "Vg (V),Cg (F)\n";
+                simulatedData.forEach(p => {
+                    csvContent += `${p.vg.toFixed(10)},${p.cg.toExponential(6)}\n`;
+                });
+
+                // 3. Create Blob and trigger download
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "simulated_mosfet_cg_vg_data.csv");
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (error) {
+                console.error("Error downloading CSV:", error);
+                alert("An error occurred while downloading the data. See console for details.");
+            } finally {
+                // 4. Restore button
+                btn.textContent = 'Download Simulated Data';
+                btn.disabled = false;
+            }
+        }
+
+        // --- Event Listeners ---
+        plotDataBtn.addEventListener('click', plotData);
+        extractParamsBtn.addEventListener('click', extractParameters);
+        simulateBtn.addEventListener('click', showSimulationView);
+        backToExtractBtn.addEventListener('click', showExtractionView);
+
+        // Add listeners to sim inputs for dynamic updates
+        const simInputs = [simTOX, simNSUB, simArea, simVfb];
+        simInputs.forEach(input => {
+            input.addEventListener('input', updateSimulation);
+        });
+        
+        generateReportBtn.addEventListener('click', generateReport);
+        downloadSimDataBtn.addEventListener('click', downloadSimulatedData);
+        
+        // Plot default data on page load
+        window.onload = plotData;
+
+    </script>
+<script src="../assets/js/iframeResize.js"></script>
+        
+        </body>
+</html>
+

@@ -1,0 +1,117 @@
+
+  {
+	  "version": 2.0,
+  "questions": [
+    {
+    "question": "1. What operating region of the MOSFET corresponds to the *maximum* measured capacitance on the Cg vs. Vg plot?",
+    "answers": {
+      "a": "Depletion",
+      "b": "Accumulation",
+      "c": "Saturation",
+      "d": "Subthreshold"
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "2. In a *high-frequency* C-V plot, the capacitance value is at its minimum during which region(s)?",
+    "answers": {
+      "a": "Only in the Depletion region",
+      "b": "Depletion and Strong Inversion regions",
+      "c": "Accumulation and Flat-band regions",
+      "d": "Only in the Accumulation region"
+    },
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "3. The SPICE parameter `TOX` (Oxide Thickness) is primarily extracted from which value on the C-V plot?",
+    "answers": {
+      "a": "The voltage at the minimum capacitance",
+      "b": "The maximum capacitance value (in accumulation)",
+      "c": "The slope of the curve in depletion",
+      "d": "The flat-band voltage"
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "4. How would a *thinner* gate oxide (a smaller `TOX` value) visually affect the Cg vs. Vg plot?",
+    "answers": {
+      "a": "It would *decrease* the maximum capacitance.",
+      "b": "It would *increase* the maximum capacitance.",
+      "c": "It would *increase* the minimum capacitance.",
+      "d": "It would not change the capacitance values."
+    },
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "5. What does the SPICE parameter `VFB` (Flat-Band Voltage) represent?",
+    "answers": {
+      "a": "The gate voltage where the channel first forms (threshold).",
+      "b": "The gate voltage required to break down the oxide.",
+      "c": "The gate voltage where the semiconductor energy bands are flat.",
+      "d": "The gate voltage where the device is in deep accumulation."
+    },
+    "correctAnswer": "c",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "6. A 'stretch-out' (a less steep slope) in the depletion region of a measured C-V curve is a strong indicator of what?",
+    "answers": {
+      "a": "A very thick gate oxide",
+      "b": "A very low substrate doping",
+      "c": "A high density of interface traps (like `NFS`)",
+      "d": "Polysilicon depletion"
+    },
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "7. What is the main difference between a *low-frequency* C-V plot and a *high-frequency* C-V plot?",
+    "answers": {
+      "a": "The capacitance in accumulation is high for LF, low for HF.",
+      "b": "The capacitance in inversion is high for LF, but low for HF.",
+      "c": "The capacitance in inversion is low for LF, but high for HF.",
+      "d": "There is no difference."
+    },
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "8. The substrate doping (`NSUB`) is a key parameter in LEVEL 2/3. How is it primarily extracted from the C-V plot?",
+    "answers": {
+      "a": "From the maximum capacitance value in accumulation.",
+      "b": "From the minimum capacitance value (in depletion/inversion).",
+      "c": "From the flat-band voltage.",
+      "d": "From the slope in accumulation."
+    },
+    "correctAnswer": "b",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "9. In advanced models (like LEVEL 6/BSIM), what is 'polysilicon depletion'?",
+    "answers": {
+      "a": "A 'stretch-out' of the C-V curve due to interface traps.",
+      "b": "The formation of a depletion region *in the polysilicon gate itself*, which reduces the total capacitance.",
+      "c": "The minority carriers in the channel failing to respond to the AC signal.",
+      "d": "The complete removal of the polysilicon gate during fabrication."
+    },
+    "correctAnswer": "b",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "10. How do quantum mechanical (QM) effects (modeled in LEVEL 6) impact the C-V curve in strong inversion?",
+    "answers": {
+      "a": "They push charge *away* from the oxide, effectively *increasing* the oxide thickness and *lowering* the capacitance.",
+      "b": "They pull charge *closer* to the oxide, effectively *decreasing* the oxide thickness and *raising* the capacitance.",
+      "c": "They trap charge at the interface, which 'stretches out' the C-V curve.",
+      "d": "They allow charge to tunnel through the oxide, which increases gate current."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  }
+
+  ]
+}
